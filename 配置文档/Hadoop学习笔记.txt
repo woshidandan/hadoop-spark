@@ -1,0 +1,575 @@
+不好意思，实在有点乱，初步整理了一下：
+具体的教程你需要根据网上说的那些安装，但是在你安装的过程中会遇到很多问题，
+我这里写的很多东西都能帮助到你，希望你成功。
+
+
+【变量的配置】
+export JAVA_HOME=~/user/jdk/jdk1.6.0_25
+export JRE_HOME=$JAVA_HOME/jre
+export HADOOP_HOME=/opt/hadoop-1.2.1
+export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/lib:$HADOOP_HOME/bin:$PATH
+
+
+export HADOOP_HOME=~/user/hadoop-2.5.2
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_hadoop_HOME=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_YARN_HOME=$HADOOP_HOME
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+export  HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export  HADOOP_HOME=/home/hadoop/labc/hadoop-2.7.1
+export  HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib:$HADOOP_COMMON_LIB_NATIVE_DIR"
+  
+
+export  HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export  HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib:$HADOOP_COMMON_LIB_NATIVE_DIR"
+
+
+显示原本电脑自带的jdk（只能是rpm才能显示和删除，不是rmp包，直接卸载jdk目录就可）
+rpm -qa | grep jdk
+rpm -qa | grep gcj
+删除jdk：
+yum -y remove java-1.7.0-openjdk-1.7.0.99-2.6.5.1.el6.x86_64
+yum -y remove java-1.6.0-openjdk-1.6.0.38-1.13.10.4.el6.x86_64
+
+rpm -e --nodeps java-1.6.0-openjdk-1.6.0.0-1.7.b09.el5 
+
+保存环境变量的修改：
+source /etc/profile
+
+解压：
+tar xzvf
+
+
+jdk和Hadoop包的获取
+
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz?AuthParam=1469585656_663c0f725a0ee8d4f6a08246812c553c"
+
+解压bin文件
+（1）chmod +x jdk-6u25-linux-x64.bin?AuthParam=1469523560_d077dd6a20383ff7a1a36deed5d6c6fd
+
+（2）./jdk-6u25-linux-x64.bin?AuthParam=1469523560_d077dd6a20383ff7a1a36deed5d6c6fd
+
+jdk-6u25-linux-x64.bin?AuthParam=1469523560_d077dd6a20383ff7a1a36deed5d6c6fd
+
+
+链接xshell中ip地址是在虚拟机中输入（ifup eth0）ipconfig中addr：192.168.1.15
+
+几个core-site.xml的配置会影响namenode的启动（自动关闭）
+
+Hadoop日志：
+共有两种日志：
+log结尾：通过log4j日志记录格式的日志，采用日常滚动的方式，文件后缀策略来命名日志文件
+，内容比较全。
+以out结尾的日志：记录标准输出和标准错误的日志，默认的情况，系统保留最新的5个日志文件
+
+日志文件的存储位置，用户可以自定义的去配置，在$HADOOP_HOME/conf/hadoop-env.sh
+
+ more hadoop   -   root          -          namenode-         hadoop-master.log
+     [框架名称] 【启动守护进程的用户名】 【守护进程的名称】 【运行守护进行的主机名称】
+   
+守护进程的启动：要不全部启动，start-all.sh，要是逐一启动，必须按照特定顺序。（共有三种启动方式）
+
+
+
+测试：
+（1）HDFS文件系统测试   ./hadoop fs
+hadoop jar hadoop-mapreduce-examples-2.5.2.jar  wordcount /wc/input/（需要自己创建） /wc/output/（不可自己创建，否则报错）
+
+
+C:\Windows\System32\drivers\etc\hosts
+（2）MapReduce程序测试，单词频率统计。
+可以去50070里去看（以前版本的50030已无法使用）
+
+
+
+1.配置文件
+  三大基础配置文件：
+1）core-site.xml:配置Hadoop common Project相关的属性配置，是Hadoop框架基础属性的配置（namenode）
+2)hdfs-site.xml:配置文件系统的相关属性（设置hdfs副本数）
+3）mapred-site.xml:配置与mapreduce相关框架属性（jobtrack的主机与端口号）
+masters（secondarynamenode）slaves（datanode和tasktracker）
+
+
+masters：主节点，并不是配置分布式框架的主节点的，是配置HDFS辅助节点的信息
+slaves：从节点，配置Hadoop中hdfs和mapreduce框架的从节点信息
+
+
+Hadoop五大服务（守护进程）
+
+移动计算而不是移动数据
+
+分布式文件系统
+
+
+
+NameNode:原数据的名称，目录，权限，文件有多少块，存在节点的位置
+
+DataNode:以块的形式存储名称
+
+
+hadoop fs -help
+查看命令帮助
+[-appendToFile <localsrc> ... <dst>]
+	[-cat [-ignoreCrc] <src> ...]
+	[-checksum <src> ...]
+	[-chgrp [-R] GROUP PATH...]
+	[-chmod [-R] <MODE[,MODE]... | OCTALMODE> PATH...]
+	[-chown [-R] [OWNER][:[GROUP]] PATH...]
+	[-copyFromLocal [-f] [-p] <localsrc> ... <dst>]
+	[-copyToLocal [-p] [-ignoreCrc] [-crc] <src> ... <localdst>]
+	[-count [-q] <path> ...]
+	[-cp [-f] [-p | -p[topax]] <src> ... <dst>]
+	[-createSnapshot <snapshotDir> [<snapshotName>]]
+	[-deleteSnapshot <snapshotDir> <snapshotName>]
+	[-df [-h] [<path> ...]]
+	[-du [-s] [-h] <path> ...]
+	[-expunge]
+	[-get [-p] [-ignoreCrc] [-crc] <src> ... <localdst>]
+	[-getfacl [-R] <path>]
+	[-getfattr [-R] {-n name | -d} [-e en] <path>]
+	[-getmerge [-nl] <src> <localdst>]
+	[-help [cmd ...]]
+	[-ls [-d] [-h] [-R] [<path> ...]]
+	[-mkdir [-p] <path> ...]
+	[-moveFromLocal <localsrc> ... <dst>]
+	[-moveToLocal <src> <localdst>]
+	[-mv <src> ... <dst>]
+	[-put [-f] [-p] <localsrc> ... <dst>]
+	[-renameSnapshot <snapshotDir> <oldName> <newName>]
+	[-rm [-f] [-r|-R] [-skipTrash] <src> ...]
+	[-rmdir [--ignore-fail-on-non-empty] <dir> ...]
+	[-setfacl [-R] [{-b|-k} {-m|-x <acl_spec>} <path>]|[--set <acl_spec> <path>]]
+	[-setfattr {-n name [-v value] | -x name} <path>]
+	[-setrep [-R] [-w] <rep> <path> ...]
+	[-stat [format] <path> ...]
+	[-tail [-f] <file>]
+	[-test -[defsz] <path>]
+	[-text [-ignoreCrc] <src> ...]
+	[-touchz <path> ...]
+	[-usage [cmd ...]]
+
+touch： 创建文件  vim：编辑
+
+export HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"
+
+问题：
+WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+mkdir: `/opt/data/test': No such file or directory
+
+查看系统的libc版本
+[hadoop@master001 native]$ ll /lib64/libc.so.6
+lrwxrwxrwx. 1 root root 12 Apr 14 16:14 /lib64/libc.so.6 -> libc-2.12.so
+显示版本为2.12
+到网站http://ftp.gnu.org/gnu/glibc/
+下载glibc-2.14.tar.bz2
+下载glibc-linuxthreads-2.5.tar.bz2
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.14.tar.bz2
+wget http://ftp.gnu.org/gnu/glibc/glibc-linuxthreads-2.5.tar.bz2
+[hadoop@master001 native]$ tar -jxvf /home/hadoop/software/glibc-2.14.tar.bz2
+[hadoop@master001 native]$ cd glibc-2.14/
+[hadoop@master001 glibc-2.14]$ tar -jxvf /home/hadoop/software/glibc-linuxthreads-2.5.tar.bz2
+[hadoop@master001 glibc-2.14]$ cd .. #必须返回上级目录
+[hadoop@master001 glibc-2.14]$ export CFLAGS="-g -O2"           #加上优化开关，否则会出现错误
+[hadoop@master001 native]$ ./glibc-2.14/configure --prefix=/usr --disable-profile --enable-add-ons --with-headers=/usr/include --with-binutils=/usr/bin
+出错
+[hadoop@master001 native]$ make        #编译，执行很久，可能出错，出错再重新执行
+[hadoop@master001 native]$ sudo make install   #安装，必须root用户执行
+#验证版本是否升级
+[hadoop@master001 native]$ ll /lib64/libc.so.6
+lrwxrwxrwx 1 root root 12 Jun 25 02:07 /lib64/libc.so.6 -> libc-2.14.so #显示2.14
+增加调试信息
+（
+CentOS 6.5下升级glibc到glibc-2.14时，执行configure，提示如下错误：
+[plain] view plain copy 在CODE上查看代码片派生到我的代码片
+# ./configure   
+checking build system type... x86_64-unknown-linux-gnu  
+checking host system type... x86_64-unknown-linux-gnu  
+checking for gcc... no  
+checking for cc... no  
+checking for cl.exe... no  
+configure: error: in `/opt/glibc-2.14':  
+configure: error: no acceptable C compiler found in $PATH  
+See `config.log' for more details  
+解决方法：安装GCC
+# yum install gcc 
+）
+[hadoop@master001 native]$ export HADOOP_ROOT_LOGGER=DEBUG,console
+#显示有下面红色部分，说明本地库不再有错误
+[hadoop@master001 native]$ hadoop fs -text /test/data/origz/access.log.gz
+
+Loaded the native-hadoop library
+
+==============================
+完成之后，需要将集群重启：
+[hadoop@master001 ~]$ sh /usr/hadoop/sbin/start-dfs.sh
+[hadoop@master001 ~]$ sh /usr/hadoop/sbin/start-yarn.sh
+[hadoop@master001 ~]$ hadoop fs -ls /
+[hadoop@master001 ~]$ hadoop fs -mkdir /usr
+[hadoop@master001 ~]$ hadoop fs -ls /
+Found 1 items
+drwxr-xr-x   - hadoop supergroup          0 2015-06-25 02:27 /usr
+
+
+
+
+Hadoop开启关闭调试信息 ：
+开启：export HADOOP_ROOT_LOGGER=DEBUG,console
+关闭：export HADOOP_ROOT_LOGGER=INFO,console
+
+
+
+
+
+
+hadoop fs -get 目录  【拷贝】
+hadoop fs -put 目录 目录 【上传文件，对hdfs文件写的过程】
+hadoop fs -text 目录 【读取文件的过程】
+
+
+
+\hadoop\hadoop2x-eclipse-plugin-master\src\contrib\eclipse-plugin
+
+
+ant jar -Dversion=2.5.2 -Declipse.home=D:\eclipse\eclipse-hadoop\eclipse -Dhadoop.home=D:\hadoop\hadoop-2.5.2
+
+问题
+【windows下将2.5.2hadoop导入myeclipse中】
+解决：
+http://blog.sina.com.cn/s/blog_9eaf28f90102uxsc.html
+那个包可以直接去网上下载，不用自己用ant或者maven编译，容易出错而且麻烦
+之后：1.新建项目 File--New--Other--Map/Reduce Project 命名为MR1, 
+然后创建类org.apache.hadoop.examples.WordCount，从hadoop-2.5.2-src中拷贝覆盖 
+（F:\hadoop\hadoop-2.5.2-src\hadoop-mapreduce-project\hadoop-mapreduce-examples\src\main\java\org\apache\hadoop\examples\WordCount.java） 即可看到效果
+
+
+ 出现 空指针异常：
+
+1、 在Hadoop的bin目录下放winutils.exe，
+
+2、在环境变量中配置 HADOOP_HOME，
+
+3、hadoop.dll拷贝到C:\Windows\System32下面即可
+
+ 
+
+上面的文件已经下载 ，在文件hadoop-common-2.2.0-bin-master.zip中
+
+问题：
+at org.apache.hadoop.util.Shell.getQualifiedBinPath(Shell.java:355)
+	at org.apache.hadoop.util.Shell.getWinUtilsPath(Shell.java:370)
+	at org.apache.hadoop.util.Shell.<clinit>(Shell.java:363)
+	at org.apache.hadoop.util.StringUtils.<clinit>(StringUtils.java:78)
+	at org.apache.hadoop.security.Groups.parseStaticMapping(Groups.java:93)
+	at org.apache.hadoop.security.Groups.<init>(Groups.java:77)
+	at org.apache.hadoop.security.Groups.getUserToGroupsMappingService(Groups.java:240)
+	at org.apache.hadoop.security.UserGroupInformation.initialize(UserGroupInformation.java:257)
+	at org.apache.hadoop.security.UserGroupInformation.ensureInitialized(UserGroupInformation.java:234)
+	at org.apache.hadoop.security.UserGroupInformation.loginUserFromSubject(UserGroupInformation.java:749)
+	at org.apache.hadoop.security.UserGroupInformation.getLoginUser(UserGroupInformation.java:734)
+	at org.apache.hadoop.security.UserGroupInformation.getCurrentUser(UserGroupInformation.java:607)
+	at org.apache.hadoop.fs.FileSystem$Cache$Key.<init>(FileSystem.java:2748)
+	at org.apache.hadoop.fs.FileSystem$Cache$Key.<init>(FileSystem.java:2740)
+	at org.apache.hadoop.fs.FileSystem$Cache.get(FileSystem.java:2606)
+	at org.apache.hadoop.fs.FileSystem.get(FileSystem.java:368)
+	at org.apache.hadoop.fs.FileSystem.get(FileSystem.java:167)
+	at org.dragon.hadoop.hdfs.util.HDFSUtils.getFileSystem(HDFSUtils.java:17)
+	at org.apache.hadoop.hdfs.HDFSFsTest.testList(HDFSFsTest.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+
+
+java.io.FileNotFoundException: File /opt/data/test/01.data does not exist
+	at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:524)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:737)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:514)
+	at org.apache.hadoop.fs.FilterFileSystem.getFileStatus(FilterFileSystem.java:397)
+	at org.apache.hadoop.fs.ChecksumFileSystem$ChecksumFSInputChecker.<init>(ChecksumFileSystem.java:140)
+	at org.apache.hadoop.fs.ChecksumFileSystem.open(ChecksumFileSystem.java:341)
+	at org.apache.hadoop.fs.FileSystem.open(FileSystem.java:764)
+	at org.apache.hadoop.hdfs.HDFSFsTest.testRead(HDFSFsTest.java:50)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:197)
+
+
+
+
+[root@hadoop-master hadoop]# hdfs dfsadmin -report
+Configured Capacity: 17698721792 (16.48 GB)
+Present Capacity: 13254725632 (12.34 GB)
+DFS Remaining: 13254680576 (12.34 GB)
+DFS Used: 45056 (44 KB)
+DFS Used%: 0.00%
+Under replicated blocks: 0
+Blocks with corrupt replicas: 0
+Missing blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 192.168.200.180:50010 (hadoop-master.dragon.org)
+Hostname: hadoop-master.dragon.org
+Decommission Status : Normal
+Configured Capacity: 17698721792 (16.48 GB)
+DFS Used: 45056 (44 KB)
+Non DFS Used: 4443996160 (4.14 GB)
+DFS Remaining: 13254680576 (12.34 GB)
+DFS Used%: 0.00%
+DFS Remaining%: 74.89%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 1
+Last contact: Tue Aug 02 16:34:06 GMT 2016
+
+
+FSDataInputStream   读取的是windows本地的路径格式如下：D:\\javatest\\china.txt
+
+
+
+API（Application Programming Interface,应用程序编程接口）是一些预先定义的函数，目的是提供应用程序与开发人员基于某软件或硬件得以访问一组例程的能力，而又无需访问源码，或理解内部工作机制的细节。
+
+
+在hdfs中创建文件，不能直接通过touch创建，先要在本地，通过touch创建，再通过put命令，上传到hdfs中
+
+
+【将两个文件内容进行合并】
+hadoop fs -put ./01.data ./02.data  /aa
+[root@hadoop-master data]# hadoop fs -ls  /aa
+Found 2 items
+-rw-r--r--   1 root supergroup         16 2016-08-07 12:46 /aa/01.data
+-rw-r--r--   1 root supergroup         22 2016-08-07 12:46 /aa/02.data
+
+[root@hadoop-master data]# hadoop fs -getmerge  /aa ./00.data
+
+[root@hadoop-master data]# more 00.data 
+01
+Hello Hadoop
+02
+hello hadoop
+hdfs
+
+
+
+
+【hadoop2.5.2将源码导入myeclipse中方法：】
+ Eclipse中用maven导入Hadoop源码
+
+1)  安装并配置maven环境变量
+
+M2_HOME: D:\profession\hadoop\apache-maven-3.3.3
+
+PATH: %M2_HOME%\bin;
+
+2)  验证：mvn –version
+
+3)  下载protobuf-2.5.0.tar.gz 和 protoc-2.5.0-win32.zip
+
+4)  将protoc-2.5.0-win32中的protoc.exe拷贝到c:\windows\system32中
+
+5)  将protoc.exe文件拷贝到解压后的XXX\protobuf-2.5.0\src目录中
+
+6)  进入XXX\protobuf-2.5.0\Java 目录
+
+执行【mvn package】命令编辑该包 生成protobuf-java-2.5.0.jar文件（位于target目录中）。
+
+（注：有可能报一大堆error，可以删除文件，重新解压缩，重新执行【mvn package】命令就OK了）
+
+输出信息：[INFO] BUILD SUCCESS
+
+7)  验证：protoc –-version
+
+
+9)  下载maven包hadoop-2.5.2-src.tar.gz
+
+10)     cmd进入hadoop-maven-plugins目录，
+
+运行mvn install
+
+输出信息：[INFO] BUILD SUCCESS
+
+11)     cmd进入hadoop-2.5.2-src目录，
+
+运行mvn eclipse:eclipse –DskipTests
+
+输出信息：[INFO] BUILD SUCCESS
+
+12)     eclipse，选择import maven projects，点击Browse… 选择hadoop-2.5.2-src源码根目录，导入各个项目
+
+13)     一大锥报错，右键,maven,disabledependency management, enable dependency management,之后只剩余common包报错
+
+
+
+
+MapReduce编程模型
+一种分布式计算模型框架，解决海量数据的计算问题
+
+MapReduce将整个并行计算过程抽象到两个函数：
+Map（映射）：对一些独立元素组成的列表的每个元素进行指定的操作，可以高度并行。
+Reduce（化简）：对一个列表的元素进行合并。
+
+一个简单的MapReduce程序只需要指定map（）、reduce（）、input和output，剩下的事由框架完成。
+
+
+MapReduce相关概念：
+JobTracker负责接受用户提交的作业，负责启动、跟踪任务执行。
+TaskTracke负责执行由JobTracker分配的任务，管理各个任务在每个节点上的执行情况。
+Job，用户的每个计算请求，称为一个作业。
+Task，每一个作业，都需要拆分开了，交由多个服务器来完成，拆分出来的执行单位，就称为任务。
+Task分为MapTask和ReduceTask两种，分别进行Map操作和Reduce操作，依据Job设置的Map类和Reduce类。
+
+
+【wordcount实例运行】
+1、cd user/hadoop-2.5.2/share/hadoop/mapreduce/ （必须到jar包的绝对路径下运行下一条指令）
+
+2、hadoop jar hadoop-mapreduce-examples-2.5.2.jar wordcount /opt/input/ /opt/output/  （其中input的文件夹需要先创建好，output无需）
+
+3、可以进入http://hadoop-master.dragon.org:50070查看或者用hadoop fs -text /opt/output/part*进行查看统计情况（*代表省略文件名其他部分）
+01	2
+02	2
+Hadoop	2
+Hello	2
+hadoop	2
+hdfs	2
+hello	2
+
+4、解析：
+map处理流程
+1）读取输入文件的内容，解析成key、value对。对输入文件的每一行，解析成key、value对。每一个键值对调用一次map函数。
+2）写自己的逻辑，对输入的key、value处理，转换成新的key、value输出。
+3）对输出的key、value进行分区。
+4）对不同分区的数据，按照key进行排序、分组。相同key的value放到一个集合中。
+5）分组后的数据进行规约。
+
+reduce执行流程
+1）对多个map任务的输出，按照不同的分区，通过网路copy到不同的reduce节点
+2）对多个map任务的输出进行合并、排序。写reduce函数自己的逻辑，对输入的key、value处理，转换成新的
+key、value输出。
+3）把reduce的输出保存到文件中。
+
+计算π的值
+ hadoop jar hadoop-mapreduce-examples-2.5.2.jar pi 10 100    （十组，每组取100个值，蒙地卡罗算法）
+
+
+虚拟机无法连接上xshell，可以选择VMware Workstation，编辑，虚拟网络参数，类型选择net，然后恢复默认，之后改子网ip为192.168.200.0
+
+【虚拟机无法上网】
+vi  /etc/sysconfig/network-scripts/ifcfg-eth0
+其中Ip地址为：
+Vmvare中NAT编辑里DHCP设置中，任意IP地址之间的ip
+netmask为255.255.255.0
+
+getway网关为NAT设置中的网关地址，必须一样：192.168.200.2
+service network restart
+（可能需要修改修改  ONBOOT=yes  MM_CONTROLLED=no 这2个选项，==为static）
+
+【yum install sz
+已加载插件：fastestmirror, security
+设置安装进程
+Loading mirror speeds from cached hostfile
+ * base: mirrors.cn99.com
+ * extras: mirrors.cn99.com
+ * updates: mirrors.cn99.com
+No package sz available.
+错误：无须任何处理】
+处理：
+（1）先更新： yum -y update
+（2）找一下相关的命令： yum search rz
+[root@hadoop-master ~]# yum search rz
+已加载插件：fastestmirror, security
+Loading mirror speeds from cached hostfile
+ * base: mirrors.sina.cn
+ * extras: centos.ustc.edu.cn
+ * updates: mirrors.163.com
+======================================================= N/S Matched: rz ========================================================
+lrzsz.x86_64 : The lrz and lsz modem communications programs
+（3）发现命令：yum install lrzsz.x86_64
+
+
+
+
+
+【使用自己写的mapreduce类来计算单词】
+（1）将写好的程序，用export导出到桌面，选择JAR file，一直到最后一个next结束，选择main函数
+（2）先在自己的虚拟机中新建一个文件夹，其中存放的一个是要计数的文本，另一个是用来计数的jar包，其中
+jar包是通过xshell中命令，rz来启动自带的插件，将windows桌面上的jar包，上传到虚拟机中。
+[root@hadoop-master data]# touch one
+[root@hadoop-master data]# vim one
+[root@hadoop-master data]# touch two
+[root@hadoop-master data]# vim two
+（3）将虚拟机中文本，上传到hdfs系统中
+先在hdfs中建立上传的文件夹，接受的文件夹会默认自动创建
+hadoop dfs -mkdir /opt/wc/input
+然后上传
+hadoop fs -put ./one ./two /opt/wc/input/
+（4）在虚拟机中，切换到jar包所在的目录，运行命令：
+hadoop jar wc.jar /opt/wc/input/ /opt/wc/output/
+在hdfs的文件系统，output目录下就能查看到结果
+http://hadoop-master.dragon.org:50070/
+
+
+
+
+wordcount运行步骤：
+（1）创建一个Job，配置和Job名称
+（2）设置Job运行的类
+（3）设置Mapper和Reduce类（很多框架自动完成）
+（4）输出结果的Key和Value类型
+（5）提交Job，等待运行结果，并在客户端显示
+
+
+
+
+
+
+
+
+
+
