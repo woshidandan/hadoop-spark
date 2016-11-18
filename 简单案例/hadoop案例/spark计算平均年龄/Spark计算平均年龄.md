@@ -104,4 +104,4 @@ file.map(line=>line.split(",")(3))
 [root@hadoop-spark bin]# ./spark-submit --class AverageCount /root/data/SparkTest.jar hdfs://hadoop-spark:9000/spark/data/peopledata.txt
 结果：
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age3.png)
-/>
+</pre>
