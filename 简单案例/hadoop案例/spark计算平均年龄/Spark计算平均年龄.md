@@ -4,7 +4,7 @@
 假设这些年龄信息都存储在一个文件里，并且该文件的格式如下，第一列是 ID，第二列是年龄。
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age1.png)
 用一个 scala程序生成我们的数据：
-</pre>
+
 ```scala
 import java.io.File
 import java.io.FileWriter
@@ -25,7 +25,9 @@ object DataMake {
   }
 }
 ```
+</pre>
 然后是具体代码，首先在我们本地运行该案例：
+
 ```scala
 import org.apache.spark.{SparkConf, SparkContext}
 /**
