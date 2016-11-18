@@ -59,9 +59,12 @@ object HighCount {
 那么排序结果就会受到影响，例如 身高数据如果是：123,110,84,72,100，那么升序排序结果将会是 100,110,123,72,84，
 显然这是不对的。
 
-基于本地的运行：</pre>
+基于本地的运行：
+</pre>
+
 
 ```scala
+
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -101,9 +104,9 @@ object PeopleInfoCacular {
     println("Highest Female:" + highestFeMale)
   }
 }
-
 ```
-<pre>结果如下：
+<pre>
+结果如下：
 Number of Male People:498
 Number of Female People:502
 Lowest Male:100
