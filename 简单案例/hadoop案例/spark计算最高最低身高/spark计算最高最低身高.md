@@ -45,7 +45,9 @@ object HighCount {
   }
 }
 ```
-<pre>案例分析
+<pre>
+
+案例分析
 对于这个案例，我们要分别统计男女的信息，那么很自然的想到首先需要对于男女信息从源文件的对应的 RDD 中进行分离，
 这样会产生两个新的 RDD，分别包含男女信息；其次是分别对男女信息对应的 RDD 的数据进行进一步映射，使其只包含身
 高数据，这样我们又得到两个 RDD，分别对应男性身高和女性身高；最后需要对这两个 RDD 进行排序，进而得到最高和最
@@ -60,7 +62,7 @@ object HighCount {
 显然这是不对的。
 
 基于本地的运行：
-</pre>
+
 
 
 ```scala
@@ -104,8 +106,9 @@ object PeopleInfoCacular {
     println("Highest Female:" + highestFeMale)
   }
 }
+
 ```
-<pre>
+
 结果如下：
 Number of Male People:498
 Number of Female People:502
@@ -113,6 +116,7 @@ Lowest Male:100
 Lowest Female:100
 Highest Male:219
 Highest Female:219
+
 </pre>
 
 
