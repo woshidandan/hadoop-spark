@@ -89,7 +89,8 @@ object PeopleInfoCacular {
       .map(line => (line.split(" ")(1) + " " + line.split(" ")(2)));
     val femaleData = dataFile.filter(line => line.contains("F"))
       .map(line => (line.split(" ")(1) + " " + line.split(" ")(2)));
-    //取得身高，此时我们不需要保留(key,value)队，所以无需采用map(b =>(b._2,b._1)).sortByKey(false).map(b =>(b._2,b._1))这种方法。
+    //取得身高，此时我们不需要保留(key,value)队，所以无需采用map(b =>(b._2,b._1))
+    .sortByKey(false).map(b =>(b._2,b._1))这种方法。
     val maleHeightData = maleData.map(line => line.split(" ")(1).toInt);
     val femaleHeightData = femaleData.map(line => line.split(" ")(1).toInt);
     //排序
