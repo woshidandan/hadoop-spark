@@ -60,7 +60,7 @@ file.map(line=>line.split(",")(3))
   }
 }
 ```
-结果：![](![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age2.png))
+结果：![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age2.png)
 
 再测试一下在 Standalone中运行：
 ```scala
@@ -100,6 +100,6 @@ file.map(line=>line.split(",")(3))
 ```
 运行指令：
 [root@hadoop-spark bin]# ./spark-submit --class AverageCount /root/data/SparkTest.jar hdfs://hadoop-spark:9000/spark/data/peopledata.txt
-结果：![](![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age3.png))
+结果：![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age3.png)
 
 </pre>
