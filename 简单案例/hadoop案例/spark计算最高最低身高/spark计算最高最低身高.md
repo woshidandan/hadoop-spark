@@ -63,7 +63,7 @@ object HighCount {
 
 基于本地的运行：
 
-
+</pre>
 
 ```scala
 
@@ -109,6 +109,7 @@ object PeopleInfoCacular {
 
 ```
 
+<pre>
 结果如下：
 Number of Male People:498
 Number of Female People:502
