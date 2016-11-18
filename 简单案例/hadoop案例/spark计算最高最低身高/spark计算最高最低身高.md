@@ -60,6 +60,7 @@ object HighCount {
 显然这是不对的。
 
 基于本地的运行：</pre>
+
 ```scala
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -100,6 +101,7 @@ object PeopleInfoCacular {
     println("Highest Female:" + highestFeMale)
   }
 }
+
 ```
 <pre>结果如下：
 Number of Male People:498
