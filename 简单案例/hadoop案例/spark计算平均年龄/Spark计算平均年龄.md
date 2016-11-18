@@ -60,7 +60,8 @@ file.map(line=>line.split(",")(3))
   }
 }
 ```
-结果：![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age2.png)
+结果：
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age2.png)
 
 再测试一下在 Standalone中运行：
 ```scala
@@ -85,7 +86,7 @@ val str = "1,122,xxx,shandongyin"
 val file=sc.textFile(logFile)
 file.flatMap(line=>line.split(",")(3))
 上面代码本意是根据","分隔，取”3“位置上的字符，即”shandongyin"，但是实际取到的值是's'
-很郁闷吧。。。仔细一想与flatMap有关，”扁平化“有关
+与flatMap有关，”扁平化“有关
 解决方法：
 file.map(line=>line.split(",")(3))
    */
@@ -100,6 +101,7 @@ file.map(line=>line.split(",")(3))
 ```
 运行指令：
 [root@hadoop-spark bin]# ./spark-submit --class AverageCount /root/data/SparkTest.jar hdfs://hadoop-spark:9000/spark/data/peopledata.txt
-结果：![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age3.png)
+结果：
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/age3.png)
 
 </pre>
