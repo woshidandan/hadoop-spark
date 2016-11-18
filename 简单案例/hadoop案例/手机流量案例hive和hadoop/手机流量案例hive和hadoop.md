@@ -44,7 +44,9 @@ Hive 创建内部表时，会将数据移动到数据仓库指向的路径；若
 因此我们在hive中创建的表phonemessage应该如下：
 use database hive;
 
-create table phonemessage(reportTime string,msisdn string,apmac string,acmac string,host string,siteType string,upPackNum bigint,downPackNum bigint,upPayLoad bigint,downPayLoad bigint,httpStatus string)row format delimited fields terminated by '\t';
+create table phonemessage(reportTime string,msisdn string,apmac string,acmac string,
+host string,siteType string,upPackNum bigint,downPackNum bigint,upPayLoad bigint,downPayLoad bigint,
+httpStatus string)row format delimited fields terminated by '\t';
 （2）	然后将hdfs目录下的数据文件load到表中，传数据
 load data inpath '/opt/wc/input/HTTP_20130313143750.dat' into table phonemessage;
 （3）执行hive 的like sql语句,对数据进行统计
