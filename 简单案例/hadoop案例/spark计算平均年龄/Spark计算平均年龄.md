@@ -49,7 +49,7 @@ val str = "1,122,xxx,shandongyin"
 val file=sc.textFile(logFile)
 file.flatMap(line=>line.split(",")(3))
 上面代码本意是根据","分隔，取”3“位置上的字符，即”shandongyin"，但是实际取到的值是's'
-很郁闷吧。。。仔细一想与flatMap有关，”扁平化“有关
+。。。仔细一想与flatMap有关，”扁平化“有关
 解决方法：
 file.map(line=>line.split(",")(3))
    */
