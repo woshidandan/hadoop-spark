@@ -20,7 +20,7 @@ K-means算法是最为经典的基于划分的聚类方法，是十大经典数�
 （4）对于所有的c个聚类中心，如果利用（2）（3）的迭代法更新后，值保持不变（经过实际的实践，值的不变
 与所选的数据和迭代的次数有很大关系），则迭代结束，否则继续迭代。
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans1.jpg)
-该算法的最大优势在于简洁和快速。算法的关键在于初始中心的选择和距离公式。
+该算法的最大优势在于简洁和快速。算法的关键在于<strong>初始中心的选择和距离公式</strong>。
 
 俗话说的好，实践是检验真理的唯一标准，我们先来跑一下这个算法，看看它的厉害之处。
  /* 测试数据如下：
@@ -40,7 +40,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
   * 执行方式：./spark-submit --master=spark://cloud25:7077 --class com.eric.spark.mllib.KMeansSample
   * --executor-memory=2g /opt/cloud/spark-1.4.1-bin-hadoop2.6/lib/spark_scala.jar
-  * Created by Eric on 2015/11/12.
+  * Created by xiaohe on 2015/11/12.本例中我采取本地运行。
 
   * 测试数据如下：
   *0.0 0.0 0.0
@@ -137,6 +137,42 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
 我们通过代码的调试以及源码的查看，发现程序的主体是在进入KMeans.scala中开始执行主要代码。
 
 进入KMeans中，这个类即为整个算法的核心所在。
+
+正如我们上文中所说的那样，核心是初始中心的选择和距离公式，那么这个算法的核心即为初始中心的选择和距离公式，
+观察整个KMeans.scala的代码中，我们可以找到下面的这个方法，也即是初始中心的选择和确定方法：
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans2.png)
+观察这个方法，我们发现初始中心的选择是随机给出几个点，然后不断的调整优化，找到一个近似最优聚类，看了很久，
+表示香菇难受，源码写的太精炼了，以我现在的水平无法参悟全部内容。
+
+之后就是距离公式，我们找到这个实现的方法：
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans3.png)
+```scala
+//findClosest方法：找到点与所有聚类中心最近的一个中心
+  private[mllib] def findClosest(
+      centers: TraversableOnce[VectorWithNorm],
+      point: VectorWithNorm): (Int, Double) = {
+    var bestDistance = Double.PositiveInfinity   //初始化最优距离为正无穷
+    var bestIndex = 0    //最佳指标
+    var i = 0
+    centers.foreach { center =>
+      // Since `\|a - b\| \geq |\|a\| - \|b\||`, we can use this lower bound to avoid unnecessary
+      // distance computation. |a - b|大于等于|a| - |b|
+      var lowerBoundOfSqDist = center.norm - point.norm  //向量的长度
+      lowerBoundOfSqDist = lowerBoundOfSqDist * lowerBoundOfSqDist  //中心点到数据点最大的距离的平方
+      if (lowerBoundOfSqDist < bestDistance) { //如果最小都大于最佳路径了，没必要算欧式距离了（欧式距离，二维和三维空间中的欧氏距离就是两点之间的实际距离）
+        val distance: Double = fastSquaredDistance(center, point) //计算欧式距离
+        if (distance < bestDistance) {
+          bestDistance = distance
+          bestIndex = i
+        }
+      }
+      i += 1
+    }
+    (bestIndex, bestDistance)
+  }
+
+//则进行距离的计算fastSquaredDistance源码（目前搞不懂）
+```
 
 
 
