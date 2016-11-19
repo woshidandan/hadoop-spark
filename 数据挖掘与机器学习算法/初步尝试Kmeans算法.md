@@ -1,4 +1,4 @@
-经典聚类算法K-Means
+<pre>经典聚类算法K-Means
 俗话说的好， 物以类聚，人以群分，我们的数据也应如此，作为我的第一个真正进入到，
 spark与数据挖掘和机器学习结合的领域的算法，很高兴，它没有让我失望，那一行行浓缩的代码，
 无不是历代程序员心血的结晶。
@@ -18,9 +18,9 @@ K-means算法是最为经典的基于划分的聚类方法，是十大经典数�
 （2）在第k次迭代中，对任意一个样本，求其到c个中心的距离，将该样本归到距离最短的中心所在的类；
 （3）利用均值等方法更新该类的中心值；
 （4）对于所有的c个聚类中心，如果利用（2）（3）的迭代法更新后，值保持不变（经过实际的实践，值的不变
-与所选的数据和迭代的次数有很大关系），则迭代结束，否则继续迭代。
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans1.jpg)
-该算法的最大优势在于简洁和快速。算法的关键在于<strong>初始中心的选择和距离公式</strong>。
+与所选的数据和迭代的次数有很大关系），则迭代结束，否则继续迭代。</pre></br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans1.jpg)</br>
+<pre>该算法的最大优势在于简洁和快速。算法的关键在于<strong>初始中心的选择和距离公式</strong>。
 
 俗话说的好，实践是检验真理的唯一标准，我们先来跑一下这个算法，看看它的厉害之处。
  /* 测试数据如下：
@@ -32,7 +32,7 @@ K-means算法是最为经典的基于划分的聚类方法，是十大经典数�
   *9.2 9.2 9.2
   */
   这是一个6X3的矩阵，我们希望这个算法，能给出我们一个聚类的结果，使这6行数据以两个聚类中心，划分为两类
-  算法具体代码如下：
+  算法具体代码如下：</pre>
   ```scala
 import org.apache.spark.mllib.clustering.KMeans
 import org.apache.spark.mllib.linalg.Vectors
@@ -82,9 +82,12 @@ object KMeansSample {
    */
 
     //使用模型测试单点数据
-    println("Vectors 0.2 0.2 0.2 is belongs to clusters:" + model.predict(Vectors.dense("0.2 0.2 0.2".split(' ').map(_.toDouble))))
-    println("Vectors 0.25 0.25 0.25 is belongs to clusters:" + model.predict(Vectors.dense("0.25 0.25 0.25".split(' ').map(_.toDouble))))
-    println("Vectors 8 8 8 is belongs to clusters:" + model.predict(Vectors.dense("8 8 8".split(' ').map(_.toDouble))))
+    println("Vectors 0.2 0.2 0.2 is belongs to clusters:" + model.predict(Vectors.dense("0.2 0.2 0.2"
+    .split(' ').map(_.toDouble))))
+    println("Vectors 0.25 0.25 0.25 is belongs to clusters:" + model.predict(Vectors.dense("0.25 0.25 0.25"
+    .split(' ').map(_.toDouble))))
+    println("Vectors 8 8 8 is belongs to clusters:" + model.predict(Vectors.dense("8 8 8".split(' ')
+    .map(_.toDouble))))
 
     // 使用误差平方之和来评估数据模型
     val cost = model.computeCost(parseData)
@@ -93,7 +96,8 @@ object KMeansSample {
 
     //交叉评估1，只返回结果
     val testdata = fileData.map(s => Vectors.dense(s.split(' ').map(_.toDouble)))
-    //model.predict:Return the cluster index that a given point belongs to||Maps given points to their cluster indices(聚类指标)
+    //model.predict:Return the cluster index that a given point belongs to||
+    //Maps given points to their cluster indices(聚类指标)
     val result1 = model.predict(testdata)
     result1.foreach(println)
     println("-----------------------")
@@ -139,13 +143,13 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
 进入KMeans中，这个类即为整个算法的核心所在。
 
 正如我们上文中所说的那样，核心是初始中心的选择和距离公式，那么这个算法的核心即为初始中心的选择和距离公式，
-观察整个KMeans.scala的代码中，我们可以找到下面的这个方法，也即是初始中心的选择和确定方法：
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans2.png)
+观察整个KMeans.scala的代码中，我们可以找到下面的这个方法，也即是初始中心的选择和确定方法：</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans2.png)</br>
 观察这个方法，我们发现初始中心的选择是随机给出几个点，然后不断的调整优化，找到一个近似最优聚类，看了很久，
 表示香菇难受，源码写的太精炼了，以我现在的水平无法参悟全部内容。
 
-之后就是距离公式，我们找到这个实现的方法：
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans3.png)
+之后就是距离公式，我们找到这个实现的方法：</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans3.png)</br>
 ```scala
 //findClosest方法：找到点与所有聚类中心最近的一个中心
   private[mllib] def findClosest(
@@ -159,8 +163,11 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
       // distance computation. |a - b|大于等于|a| - |b|
       var lowerBoundOfSqDist = center.norm - point.norm  //向量的长度
       lowerBoundOfSqDist = lowerBoundOfSqDist * lowerBoundOfSqDist  //中心点到数据点最大的距离的平方
-      if (lowerBoundOfSqDist < bestDistance) { //如果最小都大于最佳路径了，没必要算欧式距离了（欧式距离，二维和三维空间中的欧氏距离就是两点之间的实际距离）
-        val distance: Double = fastSquaredDistance(center, point) //计算欧式距离
+      if (lowerBoundOfSqDist < bestDistance) { 
+      //如果最小都大于最佳路径了，没必要算欧式距离了（欧式距离，二维和三维空间中的欧氏距离就是两点之间的实际距离）
+        val distance: Double = fastSquaredDistance(center, point)
+        //计算欧式距离，看了fastSquaredDistance的源码，其中有个变量norm1=涉及到L2范数，因为知识有限，目前无法参透，
+        //但是我们知道这个方法是返回真正的欧式距离，对本身算法的理解没有阻碍
         if (distance < bestDistance) {
           bestDistance = distance
           bestIndex = i
@@ -170,10 +177,9 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
     }
     (bestIndex, bestDistance)
   }
-
-//则进行距离的计算fastSquaredDistance源码（目前搞不懂）
 ```
-
+至于里面的findClosest的数学逻辑，贴上下面这个图片，就很容易理解了</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans4.png)</br>
 
 
 
