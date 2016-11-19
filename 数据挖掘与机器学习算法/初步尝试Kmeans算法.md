@@ -146,6 +146,7 @@ object KMeansSample {
   }
 }
 ```
+
 </br>
 通过运行的结果，我们很容易看出来，已经实现了当初的想法，其中第1、2、3行为一类，4、5、6行为一类。
 
@@ -164,6 +165,7 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)</br>
 
 之后就是距离公式，我们找到这个实现的方法：</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans3.png)</br>
+
 
 ```scala
 //findClosest方法：找到点与所有聚类中心最近的一个中心
@@ -195,6 +197,7 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)</br>
   }
 ```
 
+
 至于里面的findClosest的数学逻辑，贴上下面这个图片，就很容易理解了</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans4.png)</br>
 
@@ -221,6 +224,7 @@ x1(i,:)=xx1;
 end
 x1
 ```
+
 </br>
 最后得到我们的归一化矩阵（这里如果采用[0,1]归一化会更好）:
 <pre>
@@ -241,6 +245,7 @@ x1
 1.0000 1.0000 1.0000
 </pre></br>
 具体算法的实现代码如下：</br>
+
 
 ```scala
 import org.apache.spark.mllib.clustering.KMeans
@@ -281,6 +286,7 @@ object BallKmeans {
   }
 }
 ```
+
 
 k-means作为无监督学习算法中的一种，我们进行模型训练时，中心点的数量以及随机的中心点的选择，对我们的结果，
 会产生直接影响，另外，该算法对部分异常数据及其敏感。</br>
