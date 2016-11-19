@@ -42,7 +42,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
   * 执行方式：./spark-submit --master=spark://cloud25:7077 --class com.eric.spark.mllib.KMeansSample
   * --executor-memory=2g /opt/cloud/spark-1.4.1-bin-hadoop2.6/lib/spark_scala.jar
-  * Created by xiaohe on 2015/11/12.本例中我采取本地运行。
+  * Created by 2281444815 on 2015/11/12.本例中我采取本地运行。
 
   * 测试数据如下：
   *0.0 0.0 0.0
@@ -144,7 +144,7 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
 
 进入KMeans中，这个类即为整个算法的核心所在。
 
-正如我们上文中所说的那样，核心是初始中心的选择和距离公式，那么这个算法的核心即为初始中心的选择和距离公式，
+正如我们上文中所说的那样，核心是模型训练中初始中心的选择和距离公式，那么这个算法的核心即为初始中心的选择和距离公式，
 观察整个KMeans.scala的代码中，我们可以找到下面的这个方法，也即是初始中心的选择和确定方法：</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans2.png)</br>
 观察这个方法，我们发现初始中心的选择是随机给出几个点，然后不断的调整优化，找到一个近似最优聚类，看了很久，
@@ -164,6 +164,7 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
     centers.foreach { center =>
       // Since `\|a - b\| \geq |\|a\| - \|b\||`, we can use this lower bound to avoid unnecessary
       // distance computation. |a - b|大于等于|a| - |b|
+      //从这里我们也能看出各位前辈们为了优化算法，从一点一滴来降低复杂度，呕心沥血
       var lowerBoundOfSqDist = center.norm - point.norm  //向量的长度
       lowerBoundOfSqDist = lowerBoundOfSqDist * lowerBoundOfSqDist  //中心点到数据点最大的距离的平方
       if (lowerBoundOfSqDist < bestDistance) { 
@@ -184,10 +185,119 @@ val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes)
 至于里面的findClosest的数学逻辑，贴上下面这个图片，就很容易理解了</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans4.png)</br>
 
+接下来，我们再分析一个实际的案例</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans5.png)</br>
+对于世界杯，进入决赛圈则取其最终排名，没有进入决赛圈的，打入预选赛十强赛赋予40，预选赛小组未出线的赋予50。
+对于亚洲杯，前四名取其排名，八强赋予5，十六强赋予9，预选赛没出现的赋予17。这样做是为了使得所有数据变为标量，便于后续聚类。
+这是网上的一个真实数据，在这个案例中，我们想通过聚类，来将这些国家的足球数据排个档次，当然，作为检测
+我们聚类结果的最强真理--中国的足球，如果它不是在排名最差的那一类中，显然我们的算法是没用意义的。
 
+拿到数据后，显然我们不能直接的就开始进行模型的训练，先得对数据进行归一化处理，那样才有可比较的依据。
+本想用scala进行数据的加工处理，无奈scala从文件中读取文本内容并转化为Int数组的算法无法实现，网上也
+没有相关的Idea，只能放弃，采用matlab来对我们的数据进行处理。
+```scala
+%对行进行数据归一化处理
+x0=[50 50 9;28 9 4;17 15 3;25 40 5;28 40 2;50 50 1;50 40 9;50 40 9;40 40 5;50 50 9;50 50 5;
+50 50 9;40 40 9;40 32 17;50 50 9];
+n=size(x0,1);
+x1=[];
+for i=1:n
+xx1=x0(i,:)./x0(1,:);
+x1(i,:)=xx1;
+end
+x1
+```
+最后得到我们的归一化矩阵（这里如果采用[0,1]归一化会更好）:
+<pre>
+1.0000 1.0000 1.0000
+0.5600 0.1800 0.4444
+0.3400 0.3000 0.3333
+0.5000 0.8000 0.5556
+0.5600 0.8000 0.2222
+1.0000 1.0000 0.1111
+1.0000 0.8000 1.0000
+1.0000 0.8000 1.0000
+0.8000 0.8000 0.5556
+1.0000 1.0000 1.0000
+1.0000 1.0000 0.5556
+1.0000 1.0000 1.0000
+0.8000 0.8000 1.0000
+0.8000 0.6400 1.0000
+1.0000 1.0000 1.0000
+</pre>
+具体算法的实现代码如下：
+```scala
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.{SparkConf, SparkContext}
+/**
+  * Created by 2281444815 on 2016/11/19.
+  */
+object BallKmeans {
+  def main(args: Array[String]): Unit = {
+    val conf = new SparkConf().setAppName("BallKmeans").setMaster("local");
+    val sc = new SparkContext(conf);
+    val fileData = sc.textFile("D:\\bolldata.txt");
+    //原数据中分隔符用"/t"会报错NumberFormatException: empty String，相当于把null=>double
+    val parseData = fileData.map(record => Vectors.dense(record.split(" ").map(_.toDouble)));
 
+    val dataModelNumber = 3;
+    val dataModelTrainTimes = 2000;
+    val model = KMeans.train(parseData, dataModelNumber, dataModelTrainTimes);
+    //    println("Cluster centers:")
+    //    for (c <- model.clusterCenters){
+    //      println(" " + c.toString);
+    //    }
+    
+    //计算误差
+    val cost = model.computeCost(parseData)
+    println("Within Set Sum of Squared Errors = " + cost)
+    
+   //打印结果
+    val result = fileData.map {
+      line =>
+        val linevectore = Vectors.dense(line.split(" ").map(_.toDouble));
+        val prediction = model.predict(linevectore);
+        line + " " + prediction;
+    }
+    result.foreach(println)
+    sc.stop();
+  }
+}
+```
+k-means作为无监督学习算法中的一种，我们进行模型训练时，中心点的数量以及随机的中心点的选择，对我们的结果，
+会产生直接影响，另外，该算法对部分异常数据及其敏感。
+在我们的这个案例中，朝鲜2007年亚洲杯的数据，会造成最后结果偏差过大，我们将进行特殊赋值处理；
+另外，我们的中心点数量的选择，即dataModelNumber的取值，也会直接影响到最后结果，经过我多次的对
+模型的训练调整各个簇的中心点，发现在进行2000次迭代之后，会近似出现最小误差:</br>
+Within Set Sum of Squared Errors = 0.691361732999999
+但是以同样的次数迭代时，会出现另一个误差(还有几个几率小的误差)：</br>
+Within Set Sum of Squared Errors = 0.9448397610000014
+这是什么原因造成的呢，考虑之后，我认为是与中心点的随机有关选取。
 
+在最小误差时，我们得到聚类的结果如下：
+1.0000 1.0000 1.0000 2
+0.5600 0.1800 0.4444 1
+0.3400 0.3000 0.3333 1
+0.5000 0.8000 0.5556 0
+0.5600 0.8000 0.2222 0
+1.0000 1.0000 0.1111 0
+1.0000 0.8000 1.0000 2
+1.0000 0.8000 1.0000 2
+0.8000 0.8000 0.5556 0
+1.0000 1.0000 1.0000 2
+1.0000 1.0000 0.5556 0
+1.0000 1.0000 1.0000 2
+0.8000 0.8000 1.0000 2
+0.8000 0.6400 1.0000 2
+1.0000 1.0000 1.0000 2
 
+观察数据，我们可以对比原来的战绩表，果然中国没有让我们失望，成功的进入的最差成绩的一类，再对比其他数据，我们
+可以初步得出我们的聚类结果是可信的</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/kmeans6.png)</br>
+其中足球水平一流的国家为：日本、韩国
+水平二流的为：伊朗、沙特、伊拉克、乌兹别克斯坦、越南
+水平三流的为：中国、卡塔尔、阿联酋、泰国、阿曼、巴林、朝鲜、印尼
 
 
 
