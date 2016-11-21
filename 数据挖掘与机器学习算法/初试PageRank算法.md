@@ -89,7 +89,7 @@ object PageRank {
 他们给出的算法案例中，大家应该能发现，他们给出的测试数据都是在程序中直接跳过groupByKey这个方法所在的程序段，
 原因何在？因为他们一开始是想从文件中读取测试数据，然后发现，随着迭代次数的增加，怎么出现越来越多的数据
 的（网页）rank值无法给出来，甚至有的完全没法得到最后的rank排名结果。如下图中所示：
-迭代一次：
+迭代一次：</pre>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank7.png)
 迭代十次：
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank8.png)
@@ -134,7 +134,7 @@ C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法
 2 has rank: 1.196874404340722.
 3 has rank: 0.9999999999999998.
 1 has rank: 1.0.
-至于这里面为什么没有2，相信大家也能想的明白了。</pre>
+至于这里面为什么没有2，相信大家也能想的明白了。
                                  2016/11/21
    
                           
