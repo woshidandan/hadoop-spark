@@ -92,11 +92,11 @@ object PageRank {
 迭代一次：</pre>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank7.png)</br>
 迭代十次：</br>
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank8.png)</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank9.png)</br>
 此时我们已经完全无法得到结果了，而且没有任何的提示</br>
 </br>
 那么这个是什么原因造成的呢，我们可以通过下面这个图来看一下：</br>
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank9.png)</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank8.png)</br>
 从这个图中，对比我们执行后的结果，可以发现，我们的A是没有rank值的，原因在于，它相当于一个叶子节点，虽然我们的前辈们
 给出了上文博客中"5. 完整PageRank算法"里的解决终止点问题和陷阱问题办法（当时我被这种解决方法都快感动哭了，太佩服他们了），
 但是这种方法也是有缺点的，比如在我们的这个测试案例中，我们的叶子节点A，通过这个方法，不断的将自己的影响力扩大到整个数据的
@@ -121,6 +121,7 @@ C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法
 是A的两个分支，然后通过rank / size，来划分下一步的分支的权重。</br>
 </br>
 最后，我们从Spark官网的github下，拿到一项官方的测试数据：
+<pre>
 2 1
 4 1
 1 2
@@ -129,8 +130,11 @@ C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法
 7 6
 6 7
 3 7
+</pre>
+
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank1.png) 
 当然，你也可以自己来按照测试数据的原则，自己给出，迭代十次，得出我们的rank结果:
+<pre>
 7 has rank: 1.298188273285468.
 6 has rank: 0.7018117267145316.
 2 has rank: 1.196874404340722.
@@ -138,6 +142,7 @@ C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法
 1 has rank: 1.0.
 至于这里面为什么没有2，相信大家也能想的明白了。
                                  2016/11/21
+                                 </pre>
    
                           
 
