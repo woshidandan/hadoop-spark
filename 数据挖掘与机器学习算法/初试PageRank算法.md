@@ -90,34 +90,36 @@ object PageRank {
 原因何在？因为他们一开始是想从文件中读取测试数据，然后发现，随着迭代次数的增加，怎么出现越来越多的数据
 的（网页）rank值无法给出来，甚至有的完全没法得到最后的rank排名结果。如下图中所示：
 迭代一次：</pre>
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank7.png)
-迭代十次：
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank8.png)
-此时我们已经完全无法得到结果了，而且没有任何的提示
-那么这个是什么原因造成的呢，我们可以通过下面这个图来看一下：
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank9.png)
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank7.png)</br>
+迭代十次：</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank8.png)</br>
+此时我们已经完全无法得到结果了，而且没有任何的提示</br>
+</br>
+那么这个是什么原因造成的呢，我们可以通过下面这个图来看一下：</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank9.png)</br>
 从这个图中，对比我们执行后的结果，可以发现，我们的A是没有rank值的，原因在于，它相当于一个叶子节点，虽然我们的前辈们
 给出了上文博客中"5. 完整PageRank算法"里的解决终止点问题和陷阱问题办法（当时我被这种解决方法都快感动哭了，太佩服他们了），
 但是这种方法也是有缺点的，比如在我们的这个测试案例中，我们的叶子节点A，通过这个方法，不断的将自己的影响力扩大到整个数据的
 每一个点的rank值中，简单来说，就是本来如果迭代到A，它迭代后没有rank值，理所当然，因为它不指向任何网页，也就是rank值最终会为0，
-但是它通过这个公式v′=αMv+(1−α)e，使得每次都削弱其他点的rank值，最终，随着迭代次数的增多，将会没有rank的输出结果。
-当然，没有输出结果必须满足下面两个要求：
+但是它通过这个公式v′=αMv+(1−α)e，使得每次都削弱其他点的rank值，最终，随着迭代次数的增多，将会没有rank的输出结果。</br>
+</br>
+当然，没有输出结果必须满足下面两个要求：</br>
 <strong>一是不存在一个强连通图
 二是有像A这样的叶子节点 </strong>
 如果满足了这两点，那么我们前辈们好不容易想出来的解决终止点问题和陷阱问题办法，随着迭代次数的增多，反而起到了相反的效果。
 那么我们怎么改我们的测试数据呢？
-很简单，我们只要破坏其中的一个要求就行，可以增加一条从A到E的链接，即可
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank10.png) 
-即使我们迭代100次，我们也能得到正确的rank结果：
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank11.png) 
+很简单，我们只要破坏其中的一个要求就行，可以增加一条从A到E的链接，即可</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank10.png) </br>
+即使我们迭代100次，我们也能得到正确的rank结果：</br>
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank11.png) </br>
 即使我们的数据中还存在一个叶子节点，我们增加的这个B->A->E->B连通图，也能彻底的消除它对整体的影响，转而把它的值置为0，也即不显示
-所以，我们的测试数据并不是随意的。
-
+所以，我们的测试数据并不是随意的。</br>
+</br>
 （2）然后是我们源码中另一个值得注意的方法join方法，这个方法的主要目的是实现合并，我们的测试数据中，如果我们想表达这种意思，B链接向A，
 C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法，该算法得到的结果不是正确结果，因为它只识别A B，A C 这样的输入，而我们的join
 方法，则帮助我们把A B，A C转化成A B C，也即((A,B)(A,C))转化为(A,(B,C))，这样的话，我们的程序才能知道urls.size得到的数据，即为2,也就
-是A的两个分支，然后通过rank / size，来划分下一步的分支的权重。
-
+是A的两个分支，然后通过rank / size，来划分下一步的分支的权重。</br>
+</br>
 最后，我们从Spark官网的github下，拿到一项官方的测试数据：
 2 1
 4 1
