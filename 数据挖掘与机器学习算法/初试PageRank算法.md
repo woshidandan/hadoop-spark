@@ -132,17 +132,17 @@ C链接向A，然后我们在测试数据中写成 A B C，如果是这种写法
 3 7
 </pre>
 
-![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank1.png) 
-当然，你也可以自己来按照测试数据的原则，自己给出，迭代十次，得出我们的rank结果:
-<pre>
-7 has rank: 1.298188273285468.
-6 has rank: 0.7018117267145316.
-2 has rank: 1.196874404340722.
-3 has rank: 0.9999999999999998.
-1 has rank: 1.0.
-至于这里面为什么没有2，相信大家也能想的明白了。
+![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank1.png)</br>
+当然，你也可以自己来按照测试数据的原则，自己给出，迭代十次，得出我们的rank结果:</br>
+</br>
+7 has rank: 1.298188273285468.</br>
+6 has rank: 0.7018117267145316.</br>
+2 has rank: 1.196874404340722.</br>
+3 has rank: 0.9999999999999998.</br>
+1 has rank: 1.0.</br>
+至于这里面为什么没有2，相信大家也能想的明白了。</br>
                                  2016/11/21
-                                 </pre>
+                                 
    
                           
 
