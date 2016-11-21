@@ -83,13 +83,13 @@ object PageRank {
   }
 }
 ```
-<pre>
-源码中有两个注意点：
+</br>
+源码中有两个注意点：</br>
 （1）首先是我们的输入数据，这个是一个非常让我们值得注意的一点，相信大家如果去看网上那些杂七杂八的博客，
 他们给出的算法案例中，大家应该能发现，他们给出的测试数据都是在程序中直接跳过groupByKey这个方法所在的程序段，
 原因何在？因为他们一开始是想从文件中读取测试数据，然后发现，随着迭代次数的增加，怎么出现越来越多的数据
-的（网页）rank值无法给出来，甚至有的完全没法得到最后的rank排名结果。如下图中所示：
-迭代一次：</pre>
+的（网页）rank值无法给出来，甚至有的完全没法得到最后的rank排名结果。如下图中所示：</br>
+迭代一次：</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank7.png)</br>
 迭代十次：</br>
 ![](https://github.com/woshidandan/hadoop-spark/blob/master/picture/pagerank9.png)</br>
